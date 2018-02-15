@@ -435,42 +435,42 @@ public class AssetBrowserWindow : EditorWindow {
     guiHelper.BeginArea(new Rect(TITLE_IMAGE_PADDING, TITLE_IMAGE_PADDING,
         position.width - 2 * TITLE_IMAGE_PADDING, TITLE_BAR_HEIGHT));
 
-    if (PolyApi.IsAuthenticated) {
-      // User is authenticated, so show the profie picture.
-      guiHelper.BeginHorizontal();
-      GUILayout.FlexibleSpace();
-      Texture2D userTex = PolyApi.UserIcon != null && PolyApi.UserIcon.texture != null ?
-        PolyApi.UserIcon.texture : loadingTex;
-      if (GUILayout.Button(new GUIContent(userTex, /* tooltip */ PolyApi.UserName),
-          GUIStyle.none, GUILayout.Width(PROFILE_PICTURE_SIZE), GUILayout.Height(PROFILE_PICTURE_SIZE))) {
-        // Clicked profile picture. Show the dropdown menu.
-        ShowProfileDropdownMenu();
-      }
-      guiHelper.EndHorizontal();
-    } else if (PolyApi.IsAuthenticating) {
-      guiHelper.BeginHorizontal();
-      GUILayout.FlexibleSpace();
-      GUILayout.Label("Signing in... Please wait.");
-      guiHelper.EndHorizontal();
-      guiHelper.BeginHorizontal();
-      GUILayout.FlexibleSpace();
-      bool cancelSignInClicked = GUILayout.Button("Cancel", EditorStyles.miniButton);
-      guiHelper.EndHorizontal();
-      if (cancelSignInClicked) {
-        PtAnalytics.SendEvent(PtAnalytics.Action.ACCOUNT_SIGN_IN_CANCEL);
-        manager.CancelSignIn();
-      }
-    } else {
-      // Not signed in. Show "Sign In" button.
-      GUILayout.Space(30);
-      guiHelper.BeginHorizontal();
-      GUILayout.FlexibleSpace();
-      if (GUILayout.Button("Sign in")) {
-        PtAnalytics.SendEvent(PtAnalytics.Action.ACCOUNT_SIGN_IN_START);
-        manager.LaunchSignInFlow();
-      }
-      guiHelper.EndHorizontal();
-    }
+    //if (PolyApi.IsAuthenticated) {
+    //  // User is authenticated, so show the profie picture.
+    //  guiHelper.BeginHorizontal();
+    //  GUILayout.FlexibleSpace();
+    //  Texture2D userTex = PolyApi.UserIcon != null && PolyApi.UserIcon.texture != null ?
+    //    PolyApi.UserIcon.texture : loadingTex;
+    //  if (GUILayout.Button(new GUIContent(userTex, /* tooltip */ PolyApi.UserName),
+    //      GUIStyle.none, GUILayout.Width(PROFILE_PICTURE_SIZE), GUILayout.Height(PROFILE_PICTURE_SIZE))) {
+    //    // Clicked profile picture. Show the dropdown menu.
+    //    ShowProfileDropdownMenu();
+    //  }
+    //  guiHelper.EndHorizontal();
+    //} else if (PolyApi.IsAuthenticating) {
+    //  guiHelper.BeginHorizontal();
+    //  GUILayout.FlexibleSpace();
+    //  GUILayout.Label("Signing in... Please wait.");
+    //  guiHelper.EndHorizontal();
+    //  guiHelper.BeginHorizontal();
+    //  GUILayout.FlexibleSpace();
+    //  bool cancelSignInClicked = GUILayout.Button("Cancel", EditorStyles.miniButton);
+    //  guiHelper.EndHorizontal();
+    //  if (cancelSignInClicked) {
+    //    PtAnalytics.SendEvent(PtAnalytics.Action.ACCOUNT_SIGN_IN_CANCEL);
+    //    manager.CancelSignIn();
+    //  }
+    //} else {
+    //  // Not signed in. Show "Sign In" button.
+    //  GUILayout.Space(30);
+    //  guiHelper.BeginHorizontal();
+    //  GUILayout.FlexibleSpace();
+    //  if (GUILayout.Button("Sign in")) {
+    //    PtAnalytics.SendEvent(PtAnalytics.Action.ACCOUNT_SIGN_IN_START);
+    //    manager.LaunchSignInFlow();
+    //  }
+    //  guiHelper.EndHorizontal();
+    //}
     guiHelper.EndArea();
   }
 
@@ -781,7 +781,7 @@ public class AssetBrowserWindow : EditorWindow {
     });
     menu.AddSeparator("");
     menu.AddItem(new GUIContent("Sign Out"), /* on */ false, () => {
-      PolyApi.SignOut();
+      //PolyApi.SignOut();
       PtAnalytics.SendEvent(PtAnalytics.Action.ACCOUNT_SIGN_OUT);
       // If the user was viewing a category that requires sign in, reset back to the home page.
       if (queryRequiresAuth) {
@@ -802,12 +802,12 @@ public class AssetBrowserWindow : EditorWindow {
 
     // If the user picked a category that requires authentication, and they are not authenticated,
     // tell them why they can't view it.
-    if (CategoryRequiresAuth(selection) && !PolyApi.IsAuthenticated) {
-      PtAnalytics.SendEvent(PtAnalytics.Action.BROWSE_MISSING_AUTH);
-      EditorUtility.DisplayDialog("Sign in required",
-          "To view your uploads or likes, you must sign in first.", "OK");
-      return;
-    }
+    //if (CategoryRequiresAuth(selection) && !PolyApi.IsAuthenticated) {
+    //  PtAnalytics.SendEvent(PtAnalytics.Action.BROWSE_MISSING_AUTH);
+    //  EditorUtility.DisplayDialog("Sign in required",
+    //      "To view your uploads or likes, you must sign in first.", "OK");
+    //  return;
+    //}
 
     selectedCategory = (int)userData;
     PtAnalytics.SendEvent(PtAnalytics.Action.BROWSE_CATEGORY_SELECTED, CATEGORIES[selectedCategory].key);
@@ -854,9 +854,9 @@ public class AssetBrowserWindow : EditorWindow {
    if (mode == UiMode.BROWSE) {
     PolyRequest request = BuildRequest();
     queryRequiresAuth = CategoryRequiresAuth(selectedCategory);
-    if (!queryRequiresAuth || PolyApi.IsAuthenticated) {
-      manager.StartRequest(request);
-    }
+    //if (!queryRequiresAuth || PolyApi.IsAuthenticated) {
+    //  manager.StartRequest(request);
+    //}
    } else if (mode == UiMode.SEARCH) {
     PolyListAssetsRequest request = new PolyListAssetsRequest();
     request.keywords = searchTerms; 

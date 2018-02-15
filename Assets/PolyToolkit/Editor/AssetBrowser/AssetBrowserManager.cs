@@ -166,10 +166,10 @@ public class AssetBrowserManager {
       authConfig.serviceName = "PolyToolkitEditor";
       PolyApi.Init(authConfig, cacheConfig);
       waitingForSilentAuth = true;
-      PolyApi.Authenticate(interactive: false, callback: (PolyStatus status) => {
-        waitingForSilentAuth = false;
-        OnSignInFinished(/* wasInteractive */ false, status);
-      });
+      //PolyApi.Authenticate(interactive: false, callback: (PolyStatus status) => {
+      //  waitingForSilentAuth = false;
+      //  OnSignInFinished(/* wasInteractive */ false, status);
+      //});
     }
   }
 
@@ -177,16 +177,16 @@ public class AssetBrowserManager {
   /// Launches the interactive sign-in flow (launches a browser to perform sign-in).
   /// </summary>
   public void LaunchSignInFlow() {
-    PolyApi.Authenticate(interactive: true, callback: (PolyStatus status) => {
-      OnSignInFinished(/* wasInteractive */ true, status);
-    });
+    //PolyApi.Authenticate(interactive: true, callback: (PolyStatus status) => {
+    //  OnSignInFinished(/* wasInteractive */ true, status);
+    //});
   }
 
   /// <summary>
   /// Cancels the authentication flow.
   /// </summary>
   public void CancelSignIn() {
-    PolyApi.CancelAuthentication();
+    //PolyApi.CancelAuthentication();
   }
 
   /// <summary>
@@ -312,24 +312,24 @@ public class AssetBrowserManager {
   /// <param name="wasInteractive">If true, this was the interactive (browser-based) sign-in flow.</param>
   /// <param name="status">The result of the sign in process.</param>
   private void OnSignInFinished(bool wasInteractive, PolyStatus status) {
-    if (status.ok) {
-      string tok = PolyApi.AccessToken;
-      PtDebug.LogFormat("ABM: Sign in success. Access token: {0}",
-        (tok != null && tok.Length > 6) ? tok.Substring(0, 6) + "..." : "INVALID");
-      PtAnalytics.SendEvent(PtAnalytics.Action.ACCOUNT_SIGN_IN_SUCCESS);
-    } else if (wasInteractive) {
-      Debug.LogErrorFormat("Failed to sign in. Please try again: " + status);
-      PtAnalytics.SendEvent(PtAnalytics.Action.ACCOUNT_SIGN_IN_FAILURE, status.ToString());
-    }
-    if (null != refreshCallback) refreshCallback();
+    //if (status.ok) {
+    //  string tok = PolyApi.AccessToken;
+    //  PtDebug.LogFormat("ABM: Sign in success. Access token: {0}",
+    //    (tok != null && tok.Length > 6) ? tok.Substring(0, 6) + "..." : "INVALID");
+    //  PtAnalytics.SendEvent(PtAnalytics.Action.ACCOUNT_SIGN_IN_SUCCESS);
+    //} else if (wasInteractive) {
+    //  Debug.LogErrorFormat("Failed to sign in. Please try again: " + status);
+    //  PtAnalytics.SendEvent(PtAnalytics.Action.ACCOUNT_SIGN_IN_FAILURE, status.ToString());
+    //}
+    //if (null != refreshCallback) refreshCallback();
 
-    // If we had a deferred request that was waiting for auth, send it now.
-    if (requestToSendAfterAuth != null) {
-      PtDebug.Log("Sending deferred request that was waiting for auth.");  
-      PolyRequest request = requestToSendAfterAuth;
-      requestToSendAfterAuth = null;
-      StartRequest(request);
-    }
+    //// If we had a deferred request that was waiting for auth, send it now.
+    //if (requestToSendAfterAuth != null) {
+    //  PtDebug.Log("Sending deferred request that was waiting for auth.");  
+    //  PolyRequest request = requestToSendAfterAuth;
+    //  requestToSendAfterAuth = null;
+    //  StartRequest(request);
+    //}
   }
 
   /// <summary>

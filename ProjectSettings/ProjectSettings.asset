@@ -567,7 +567,7 @@ PlayerSettings:
   m_MobileRenderingPath: 1
   metroPackageName: Poly-Unity-UWP-HoloLens
   metroPackageVersion: 1.0.0.0
-  metroCertificatePath: C:\Daten\Projekte\Unity\Poly-Unity-UWP-HoloLens\Assets\WSATestCertificate.pfx
+  metroCertificatePath: Assets/WSATestCertificate.pfx
   metroCertificatePassword: 
   metroCertificateSubject: DefaultCompany
   metroCertificateIssuer: DefaultCompany

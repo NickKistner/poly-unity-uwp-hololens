@@ -151,7 +151,7 @@ namespace PolyToolkitInternal {
     /// </summary>
     public string GetAccessToken() {
       // Return the manually provided access token (priority) or the access token provided by Authenticator.
-      return manuallyProvidedAccessToken ?? (Authenticator.IsInitialized ? Authenticator.Instance.AccessToken : null);
+      return manuallyProvidedAccessToken /*?? (Authenticator.IsInitialized ? Authenticator.Instance.AccessToken : null)*/;
     }
 
     /// <summary>

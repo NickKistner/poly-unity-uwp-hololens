@@ -14,86 +14,104 @@
 
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
-namespace PolyToolkitInternal.model.util {
-
-  /// <summary>
-  /// Class to manage background work tasks.
-  /// </summary>
-  [ExecuteInEditMode]
-  public class BackgroundMain : MonoBehaviour {
-    private Thread backgroundThread;
-    private bool running = true;
-    private bool setupDone = false;
+namespace PolyToolkitInternal.model.util
+{
 
     /// <summary>
-    /// Queue to hold BackgroundWork tasks.
+    /// Class to manage background work tasks.
     /// </summary>
-    private ConcurrentQueue<BackgroundWork> backgroundQueue = new ConcurrentQueue<BackgroundWork>();
+    [ExecuteInEditMode]
+    public class BackgroundMain : MonoBehaviour
+    {
+        private Thread backgroundThread;
+        private bool running = true;
+        private bool setupDone = false;
 
-    /// <summary>
-    /// Queue to hold completed background work tasks so that the main thread may execute the relevant post work.
-    /// </summary>
-    private ConcurrentQueue<BackgroundWork> forMainThread = new ConcurrentQueue<BackgroundWork>();
+        /// <summary>
+        /// Queue to hold BackgroundWork tasks.
+        /// </summary>
+        private ConcurrentQueue<BackgroundWork> backgroundQueue = new ConcurrentQueue<BackgroundWork>();
 
-    /// <summary>
-    ///   Enqueue work that should be done on a background thread.
-    /// </summary>
-    /// <param name="work">The work.</param>
-    public void DoBackgroundWork(BackgroundWork work) {
-      if (Application.isPlaying) {
-        backgroundQueue.Enqueue(work);
-      } else {
-        // In the Editor, just do the work right away on the main thread (background threads
-        // don't work well -- or we just don't know how to use them).
-        work.BackgroundWork();
-        work.PostWork();
-      }
-    }
+        /// <summary>
+        /// Queue to hold completed background work tasks so that the main thread may execute the relevant post work.
+        /// </summary>
+        private ConcurrentQueue<BackgroundWork> forMainThread = new ConcurrentQueue<BackgroundWork>();
 
-    /// <summary>
-    ///   Main function for the background work thread.
-    /// </summary>
-    private void ProcessBackgroundWork() {
-      while (running) {
-        BackgroundWork work;
-        if (backgroundQueue.WaitAndDequeue(/* wait time ms */ 1000, out work)) {
-          try {
-            work.BackgroundWork();
-            forMainThread.Enqueue(work);
-          } catch(Exception e) {
-            // Should probably be a fatal error.  For now, just log something.
-            Debug.LogError("Exception handling background work: " + e);
-          }
+        /// <summary>
+        ///   Enqueue work that should be done on a background thread.
+        /// </summary>
+        /// <param name="work">The work.</param>
+        public void DoBackgroundWork(BackgroundWork work)
+        {
+            if (Application.isPlaying)
+            {
+                backgroundQueue.Enqueue(work);
+            }
+            else
+            {
+                // In the Editor, just do the work right away on the main thread (background threads
+                // don't work well -- or we just don't know how to use them).
+                work.BackgroundWork();
+                work.PostWork();
+            }
         }
-      }
-    }
 
-    /// <summary>
-    /// Does one-time setup. Must be called before anything.
-    /// </summary>
-    public void Setup() {
-      if (Application.isPlaying) {
-        backgroundThread = new Thread(ProcessBackgroundWork);
-        backgroundThread.IsBackground = true;
-        backgroundThread.Priority = System.Threading.ThreadPriority.Lowest;
-        backgroundThread.Start();
-      }
-      setupDone = true;
-    }
+        /// <summary>
+        ///   Main function for the background work thread.
+        /// </summary>
+        private void ProcessBackgroundWork()
+        {
+            while (running)
+            {
+                BackgroundWork work;
+                if (backgroundQueue.WaitAndDequeue(/* wait time ms */ 1000, out work))
+                {
+                    try
+                    {
+                        work.BackgroundWork();
+                        forMainThread.Enqueue(work);
+                    }
+                    catch (Exception e)
+                    {
+                        // Should probably be a fatal error.  For now, just log something.
+                        Debug.LogError("Exception handling background work: " + e);
+                    }
+                }
+            }
+        }
 
-    void Update() {
-      if (!Application.isPlaying) return;
+        /// <summary>
+        /// Does one-time setup. Must be called before anything.
+        /// </summary>
+        public void Setup()
+        {
+            if (Application.isPlaying)
+            {
+                Task.Run(() => ProcessBackgroundWork());
+                //backgroundThread = new Thread(ProcessBackgroundWork);
+                //backgroundThread.IsBackground = true;
+                //backgroundThread.Priority = System.Threading.ThreadPriority.Lowest;
+                //backgroundThread.Start();
+            }
+            setupDone = true;
+        }
 
-      if (!setupDone) return;
-      // While we have done less than 5ms of work from the work queue, start doing new work. Note that the entirety of
-      // the de-queued new work will be performed this frame.
-      float startTime = Time.realtimeSinceStartup;
-      BackgroundWork work;
-      while ((Time.realtimeSinceStartup - startTime) < 0.005f && forMainThread.Dequeue(out work)) {
-        work.PostWork();
-      }
+        void Update()
+        {
+            if (!Application.isPlaying) return;
+
+            if (!setupDone) return;
+            // While we have done less than 5ms of work from the work queue, start doing new work. Note that the entirety of
+            // the de-queued new work will be performed this frame.
+            float startTime = Time.realtimeSinceStartup;
+            BackgroundWork work;
+            while ((Time.realtimeSinceStartup - startTime) < 0.005f && forMainThread.Dequeue(out work))
+            {
+                work.PostWork();
+            }
+        }
     }
-  }
 }
