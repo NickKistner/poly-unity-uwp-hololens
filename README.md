@@ -10,4 +10,5 @@ I initially commited the original SDK in version 1.0.3 where my changes are base
 * Change to .net Scripting Backend
 * Change to Scripting Runtime Version .net 4.6
 * Insert your API Key
+* If you are already using a Json.net Library from MRTK or whatever, delete Assets/PolyToolkit/ThirdParty/Json-NET-for-Unity
 * Enjoy!
